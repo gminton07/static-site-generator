@@ -1,8 +1,8 @@
 import unittest
 from textnode import TextNode, TextType
-from md_delimiter import split_nodes_delimiter
+from md_delimiter import split_nodes_delimiter, extract_markdown_images, extract_markdown_links
 
-class TestMDDelimiter(unittest.TestCase):
+class TestMDSplitDelimiter(unittest.TestCase):
     def test_split_bold(self):
         md = "This is text with a **bolded phrase** in the middle"
         node = TextNode(
@@ -115,4 +115,37 @@ class TestMDDelimiter(unittest.TestCase):
     #    # Will fail for now:
     #    self.assertEqual(len(new_nodes), 5)
     #    pass
+
+
+class TestMDExtractImageLink(unittest.TestCase):
+    def test_extract_image(self):
+        md = "![Cat Photo](/cat/png), ![More cat pics](/cat/image/png.jpeg)"
+        expected = [("Cat Photo", "/cat/png"), ("More cat pics", "/cat/image/png.jpeg")]
+        match = extract_markdown_images(md)
+        self.assertEqual(len(match), 2)
+        self.assertListEqual(match, expected)
+        pass
+
+    def test_extract_link(self):
+        md = "Here  is the hyperlink [for github](https://www.github.com). And open [this](localhost://8888:90) for your server."
+        match = extract_markdown_links(md)
+        expected = [("for github", "https://www.github.com"), ("this", "localhost://8888:90")]
+        self.assertEqual(len(match), 2)
+        self.assertListEqual(match, expected)
+        pass
+
+    def test_extract_link_bad(self):
+        md = "![Puppy](/Images/puppy.bmp)"
+        match = extract_markdown_links(md)
+        expected = []
+        self.assertListEqual(match, expected)
+        pass
+
+    def test_extract_image_bad(self):
+        md = "[YouTube](https://www.youtube.com)"
+        match = extract_markdown_images(md)
+        expected = []
+        self.assertListEqual(match, expected)
+        pass
+
 
