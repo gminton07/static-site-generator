@@ -1,5 +1,5 @@
 import unittest
-from textnode import TextNode, TextType
+from textnode import TextNode, TextType, text_node_to_html_node
 
 class TestTextNode(unittest.TestCase):
     def test_eq(self):
@@ -21,7 +21,51 @@ class TestTextNode(unittest.TestCase):
         expected = f'TextNode({text}, {text_type.value}, {url})'
         node = TextNode(text, text_type, url)
         self.assertEqual(expected, str(node))
-        
+        pass
+
+    def test_text(self):
+        node = TextNode("This is a text node", TextType.TEXT)
+        html_node = text_node_to_html_node(node)
+        self.assertEqual(html_node.tag, None)
+        self.assertEqual(html_node.value, "This is a text node")
+        pass
+
+    def test_bold(self):
+        node = TextNode("This text is bold", TextType.BOLD)
+        html_node = text_node_to_html_node(node)
+        self.assertEqual(html_node.tag, 'b')
+        self.assertEqual(html_node.value, 'This text is bold')
+        pass
+
+    def test_italic(self):
+        node = TextNode("In italics", TextType.ITALIC)
+        html_node = text_node_to_html_node(node)
+        self.assertEqual(html_node.tag, 'i')
+        self.assertEqual(html_node.value, "In italics")
+        pass
+
+    def test_code(self):
+        node = TextNode("PYTHON: print('Hello, world!')", TextType.CODE)
+        html_node = text_node_to_html_node(node)
+        self.assertEqual(html_node.tag, 'code')
+        self.assertEqual(html_node.value, "PYTHON: print('Hello, world!')")
+        pass
+
+    def test_link(self):
+        node = TextNode("Google search", TextType.LINK, "https://www.google.com/search")
+        html_node = text_node_to_html_node(node)
+        self.assertEqual(html_node.tag, 'a')
+        self.assertEqual(html_node.value, "Google search")
+        self.assertIn(("href", "https://www.google.com/search"), html_node.props.items())
+        pass
+    
+    def test_image(self):
+        node = TextNode("Cat image", TextType.IMAGE, "/pics/cat.jpeg")
+        html_node = text_node_to_html_node(node)
+        self.assertEqual(html_node.tag, 'img')
+        self.assertEqual(html_node.to_html(), '<img src="/pics/cat.jpeg" alt="Cat image"></img>')
+        pass
+
 
 
 if __name__ == '__main__':
