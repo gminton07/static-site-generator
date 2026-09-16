@@ -52,8 +52,7 @@ def extract_markdown_images(text: str) -> tuple[str, str]:
 
 def extract_markdown_links(text: str) -> tuple[str, str]:
     # md links: [anchor_text](link_url)
-    example_reg = r"(?<!!)\[([^\[\]]*)\]\(([^\(\)]*)\)"
-    reg = r"(?<!!)\[([\w ]*)\]\(([\w/.:]*)\)"
+    reg = r"(?<!!)\[([^\[\]]*)\]\(([^\(\)]*)\)"
     matches = re.findall(reg, text)
     #print(matches)
     return matches

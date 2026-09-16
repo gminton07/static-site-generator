@@ -37,19 +37,8 @@ def block_to_block_type(block: str) -> BlockType:
         else:
             return False
 
-    # def startswith(lst: list[str], search: str) -> bool:
-    #     count = 0
-    #     matches = (re.match(search, line) for line in lst)
-    #     for match in matches:
-    #         if match is not None:
-    #             count += 1
-    #     if count == len(lst):
-    #         return True
-    #     else:
-    #         return False
-
     if startswith(block_lines, r"^(>)"):
-        print(f"{block_lines = }, {block = }")
+        #print(f"{block_lines = }, {block = }")
         return BlockType.QUOTE
     elif startswith(block_lines, r"- "):
         return BlockType.UNORDERED_LIST
@@ -136,7 +125,8 @@ def text_to_children(text: str) -> list[HTMLNode]:
         lines = text.splitlines()
         new_lines = []
         for line in lines: 
-            new_lines.append(re.sub("^>", "", line))
+            subbed_line = re.sub("^>", "", line)
+            new_lines.append(subbed_line.strip())
         new_text = "\n".join(new_lines)
         text_nodes = text_to_text_node(new_text)
         child_nodes = []
