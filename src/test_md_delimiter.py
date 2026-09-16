@@ -1,6 +1,6 @@
 import unittest
 from textnode import TextNode, TextType
-from md_delimiter import split_nodes_delimiter, extract_markdown_images, extract_markdown_links, split_nodes_image, split_nodes_link, text_to_textnode
+from md_delimiter import split_nodes_delimiter, extract_markdown_images, extract_markdown_links, split_nodes_image, split_nodes_link, text_to_text_node
 
 class TestMDSplitDelimiter(unittest.TestCase):
     def test_split_bold(self):
@@ -286,9 +286,9 @@ class TestMDSplitLink(unittest.TestCase):
         pass
 
 class TestTexttoTextNode(unittest.TestCase):
-    def test_split_to_textnode(self):
+    def test_split_to_text_node(self):
         text = "This is **text** with an _italic_ word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)"
-        new_nodes = text_to_textnode(text)
+        new_nodes = text_to_text_node(text)
         self.assertListEqual(
             [
                 TextNode("This is ", TextType.TEXT),

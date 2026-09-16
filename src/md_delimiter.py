@@ -159,7 +159,7 @@ def split_nodes_link(old_nodes: list[TextNode]) -> list[TextNode]:
     
     return new_nodes
 
-def text_to_textnode(text: str) -> list[TextNode]:
+def text_to_text_node(text: str) -> list[TextNode]:
     first_node = TextNode(text, TextType.TEXT)
     
     bold = split_nodes_delimiter([first_node], "**", TextType.BOLD)
