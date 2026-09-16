@@ -59,7 +59,7 @@ def generate_page(from_path, template_path, dest_path):
 
     # Replace template placeholders
     dest_content = template_content.replace("{{ Title }}", title)
-    dest_content = template_content.replace("{{ Content }}", html_string)
+    dest_content = dest_content.replace("{{ Content }}", html_string)
 
     # Write HTML page to dest_path
     if os.path.exists(os.path.dirname(dest_path)):
@@ -72,11 +72,32 @@ def generate_page(from_path, template_path, dest_path):
 
     return
 
+def generate_pages_recursive(dir_path_content, template_path, dest_dir_path):
+    content_relpath = os.path.relpath(dir_path_content)
+    dest_relpath = os.path.relpath(dest_dir_path)
+
+    files = os.listdir(content_relpath)
+    print(files)
+
+    for file in files:
+        name, ext = os.path.splitext(file)
+        file_cont_path = os.path.join(content_relpath, name + ext)
+        file_dest_path = os.path.join(dest_relpath, name)
+        if os.path.isdir(file_cont_path):
+            if not os.path.exists(file_dest_path):
+                print(f"Creating dir: {file_dest_path}")
+                os.mkdir(file_dest_path)
+            generate_pages_recursive(file_cont_path, template_path, file_dest_path)
+
+        # Otherwise, treat as regular file
+        elif ext == ".md":
+            file_dest_path += ".html"
+            generate_page(file_cont_path, template_path, file_dest_path)
 
 
 def main() -> None:
     copy_directory("static", "public")
-    generate_page("content/index.md", "template.html", "public/index.html")
+    generate_pages_recursive("content", "template.html", "public")
     return
 
 if __name__ == '__main__':
