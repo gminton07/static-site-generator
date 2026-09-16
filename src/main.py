@@ -37,7 +37,7 @@ def extract_title(markdown: str) -> str:
     else:
         raise Exception("Error: markdown string must begin with h1 header")
 
-def generate_page(from_path, template_path, dest_path, basepath = "/"):
+def generate_page(from_path, template_path, dest_path, basepath):
     print(f"Generating page from {from_path} to {dest_path} using {template_path}.")
 
     # Get file contents
@@ -60,7 +60,7 @@ def generate_page(from_path, template_path, dest_path, basepath = "/"):
     # Replace template placeholders
     dest_content = template_content.replace("{{ Title }}", title)
     dest_content = dest_content.replace("{{ Content }}", html_string)
-    dest_content = dest_content.replace('href=/"', f'href="{basepath}')
+    dest_content = dest_content.replace('href="/', f'href="{basepath}')
     dest_content = dest_content.replace('src="/', f'src="{basepath}')
 
     # Write HTML page to dest_path
@@ -74,7 +74,7 @@ def generate_page(from_path, template_path, dest_path, basepath = "/"):
 
     return
 
-def generate_pages_recursive(dir_path_content, template_path, dest_dir_path, basepath = "/"):
+def generate_pages_recursive(dir_path_content, template_path, dest_dir_path, basepath):
     content_relpath = os.path.relpath(dir_path_content)
     dest_relpath = os.path.relpath(dest_dir_path)
 
@@ -89,16 +89,21 @@ def generate_pages_recursive(dir_path_content, template_path, dest_dir_path, bas
             if not os.path.exists(file_dest_path):
                 print(f"Creating dir: {file_dest_path}")
                 os.mkdir(file_dest_path)
-            generate_pages_recursive(file_cont_path, template_path, file_dest_path)
+            generate_pages_recursive(file_cont_path, template_path, file_dest_path, basepath)
 
         # Otherwise, treat as regular file
         elif ext == ".md":
             file_dest_path += ".html"
-            generate_page(file_cont_path, template_path, file_dest_path)
+            generate_page(file_cont_path, template_path, file_dest_path, basepath)
 
 
 def main() -> None:
-    basepath = sys.argv[0] if sys.argv else "/"
+    # if len(sys.argv) > 1:
+    #     basepath = sys.argv[1]
+    # else:
+    #     basepath = "/"
+    basepath = sys.argv[1] if len(sys.argv) > 1 else "/"
+    print(f'{basepath = }')
     copy_directory("static", "docs")
     # content_path = os.path.join(basepath, "content")
     # template_path = os.path.join(basepath, "template.html")
