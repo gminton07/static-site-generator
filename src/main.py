@@ -1,4 +1,4 @@
-import os, shutil
+import os, shutil, sys
 from textnode import TextType, TextNode
 from markdown_to_blocks import markdown_to_html_node
 
@@ -37,7 +37,7 @@ def extract_title(markdown: str) -> str:
     else:
         raise Exception("Error: markdown string must begin with h1 header")
 
-def generate_page(from_path, template_path, dest_path):
+def generate_page(from_path, template_path, dest_path, basepath = "/"):
     print(f"Generating page from {from_path} to {dest_path} using {template_path}.")
 
     # Get file contents
@@ -60,6 +60,8 @@ def generate_page(from_path, template_path, dest_path):
     # Replace template placeholders
     dest_content = template_content.replace("{{ Title }}", title)
     dest_content = dest_content.replace("{{ Content }}", html_string)
+    dest_content = dest_content.replace('href=/"', f'href="{basepath}')
+    dest_content = dest_content.replace('src="/', f'src="{basepath}')
 
     # Write HTML page to dest_path
     if os.path.exists(os.path.dirname(dest_path)):
@@ -72,7 +74,7 @@ def generate_page(from_path, template_path, dest_path):
 
     return
 
-def generate_pages_recursive(dir_path_content, template_path, dest_dir_path):
+def generate_pages_recursive(dir_path_content, template_path, dest_dir_path, basepath = "/"):
     content_relpath = os.path.relpath(dir_path_content)
     dest_relpath = os.path.relpath(dest_dir_path)
 
@@ -96,8 +98,12 @@ def generate_pages_recursive(dir_path_content, template_path, dest_dir_path):
 
 
 def main() -> None:
-    copy_directory("static", "public")
-    generate_pages_recursive("content", "template.html", "public")
+    basepath = sys.argv[0] if sys.argv else "/"
+    copy_directory("static", "docs")
+    # content_path = os.path.join(basepath, "content")
+    # template_path = os.path.join(basepath, "template.html")
+    # public_path = os.path.join(basepath, "public")
+    generate_pages_recursive("content", "template.html", "docs", basepath)
     return
 
 if __name__ == '__main__':
